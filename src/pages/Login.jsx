@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Mail, Lock } from 'lucide-react';
 import {
     loginUser,
@@ -8,6 +8,8 @@ import {
 
 const Login = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const redirectTo = location.state?.from?.pathname || '/';
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,7 +30,7 @@ const Login = () => {
             setIsSubmitting(true);
             const loggedInUser = await loginUser({ email, password });
             setCurrentUser(loggedInUser);
-            navigate('/');
+            navigate(redirectTo, { replace: true });
         } catch (apiError) {
             setError(apiError.message || 'Login failed. Please try again.');
         } finally {

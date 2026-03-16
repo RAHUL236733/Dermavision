@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { getCurrentUser } from './services/api';
 
 // Layouts
 import MainLayout from './layouts/MainLayout';
@@ -23,6 +24,17 @@ import Summary from './pages/dashboard/Summary';
 import ConfidenceScore from './pages/dashboard/ConfidenceScore';
 import DietPlan from './pages/dashboard/DietPlan';
 
+function RequireAuth({ children }) {
+    const location = useLocation();
+    const currentUser = getCurrentUser();
+
+    if (!currentUser?.id) {
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+
+    return children;
+}
+
 function App() {
     return (
         <Router>
@@ -37,13 +49,19 @@ function App() {
                     <Route path="register" element={<Register />} />
                 </Route>
 
-                {/* Protected Routes (Simulated) */}
-                <Route path="/profile" element={<MainLayout><Profile /></MainLayout>} />
+                {/* Protected Routes */}
+                <Route
+                    path="/profile"
+                    element={<RequireAuth><MainLayout><Profile /></MainLayout></RequireAuth>}
+                />
 
-                {/* Dashboard Routes */}
-                <Route path="/upload" element={<MainLayout><ImageUpload /></MainLayout>} />
+                {/* Analysis Routes */}
+                <Route
+                    path="/upload"
+                    element={<RequireAuth><MainLayout><ImageUpload /></MainLayout></RequireAuth>}
+                />
 
-                <Route path="/dashboard" element={<DashboardLayout />}>
+                <Route path="/dashboard" element={<RequireAuth><DashboardLayout /></RequireAuth>}>
                     <Route index element={<Overview />} />
                     <Route path="disease" element={<DiseaseName />} />
                     <Route path="precautions" element={<Precautions />} />

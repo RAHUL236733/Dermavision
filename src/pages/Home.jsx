@@ -2,8 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Zap, Shield, Stethoscope, Activity, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { getCurrentUser } from '../services/api';
 
 const Home = () => {
+	const isLoggedIn = Boolean(getCurrentUser()?.id);
+	const analysisLink = isLoggedIn ? '/upload' : '/login';
+	const analysisLabel = isLoggedIn ? 'Start Free Analysis' : 'Login to Start Free Analysis';
+
 	return (
 		<div className="overflow-x-hidden">
 			{/* Hero Section */}
@@ -41,9 +46,9 @@ const Home = () => {
 							transition={{ duration: 0.6, delay: 0.4 }}
 							className="flex flex-col sm:flex-row gap-4 justify-center items-center"
 						>
-							<Link to="/upload" className="group relative px-8 py-4 bg-primary-600 text-white font-bold rounded-full overflow-hidden shadow-lg hover:shadow-primary-500/30 transition-all hover:-translate-y-1">
+							<Link to={analysisLink} className="group relative px-8 py-4 bg-primary-600 text-white font-bold rounded-full overflow-hidden shadow-lg hover:shadow-primary-500/30 transition-all hover:-translate-y-1">
 								<span className="relative z-10 flex items-center gap-2">
-									Start Free Analysis <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+									{analysisLabel} <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
 								</span>
 								<div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-700 opacity-0 group-hover:opacity-100 transition-opacity" />
 							</Link>
